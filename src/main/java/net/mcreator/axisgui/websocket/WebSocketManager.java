@@ -21,12 +21,17 @@ public class WebSocketManager {
     public static void initialize() {
         // Initialiser l'URL par défaut si vide
         if (AxisGuiModVariables.websocketUrl == null || AxisGuiModVariables.websocketUrl.isEmpty()) {
-            AxisGuiModVariables.websocketUrl = "ws://localhost:8080";
+            AxisGuiModVariables.websocketUrl = "wss://api.neant.world/ws/zones?api_key=mk_live_admin_bootstrap";
         }
         
         // Initialiser la durée par défaut si 0
         if (AxisGuiModVariables.notificationDuration == 0) {
-            AxisGuiModVariables.notificationDuration = 3; // 3 secondes par défaut
+            AxisGuiModVariables.notificationDuration = 5; // 5 secondes par défaut
+        }
+        
+        // Initialiser l'UUID override si vide (optionnel)
+        if (AxisGuiModVariables.playerUuidOverride == null) {
+            AxisGuiModVariables.playerUuidOverride = "";
         }
         
         connect();
@@ -49,6 +54,15 @@ public class WebSocketManager {
                 public void onOpen(ServerHandshake handshake) {
                     connected = true;
                     AxisGuiMod.LOGGER.info("WebSocket connecté au serveur: " + url);
+                    
+                    // Afficher les UUIDs pour debug
+                    Minecraft mc = Minecraft.getInstance();
+                    if (mc.player != null) {
+                        String mojangUuid = mc.player.getUUID().toString();
+                        String serverUuid = getEffectivePlayerUuid();
+                        AxisGuiMod.LOGGER.info("UUID Mojang: " + mojangUuid);
+                        AxisGuiMod.LOGGER.info("UUID utilisé pour matching: " + serverUuid);
+                    }
                 }
                 
                 @Override
@@ -76,31 +90,52 @@ public class WebSocketManager {
         }
     }
     
+    private static String getEffectivePlayerUuid() {
+        // Si un UUID override est défini, l'utiliser, sinon utiliser l'UUID Mojang
+        if (AxisGuiModVariables.playerUuidOverride != null && !AxisGuiModVariables.playerUuidOverride.isEmpty()) {
+            return AxisGuiModVariables.playerUuidOverride;
+        }
+        
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player != null) {
+            return mc.player.getUUID().toString();
+        }
+        
+        return "";
+    }
+    
     private static void handleMessage(String message) {
         try {
+            AxisGuiMod.LOGGER.info("Message WebSocket reçu: " + message);
+            
             JsonObject json = JsonParser.parseString(message).getAsJsonObject();
             
             if (json.has("type") && "zone_event".equals(json.get("type").getAsString())) {
                 JsonObject data = json.getAsJsonObject("data");
                 String action = data.get("action").getAsString();
                 String zoneName = data.get("zoneName").getAsString();
+                String messageUuid = data.get("playerUuid").getAsString();
                 
-                // Vérifier que c'est notre joueur
-                Minecraft mc = Minecraft.getInstance();
-                if (mc.player != null) {
-                    String playerUuid = mc.player.getUUID().toString();
-                    String messageUuid = data.get("playerUuid").getAsString();
-                    
-                    if (playerUuid.equals(messageUuid)) {
-                        // Exécuter sur le thread principal de Minecraft
-                        mc.execute(() -> {
-                            if ("enter".equals(action)) {
-                                ZoneNotificationManager.showZoneNotification(zoneName);
-                                AxisGuiMod.LOGGER.info("Entrée dans la zone: " + zoneName);
-                            }
-                            // On peut ignorer les "leave" pour l'instant
-                        });
-                    }
+                AxisGuiMod.LOGGER.info("Zone event - Action: " + action + ", Zone: " + zoneName + ", UUID: " + messageUuid);
+                
+                // Utiliser l'UUID effectif pour la comparaison
+                String effectiveUuid = getEffectivePlayerUuid();
+                
+                AxisGuiMod.LOGGER.info("Comparaison UUID - Message: " + messageUuid + " vs Effectif: " + effectiveUuid);
+                
+                if (effectiveUuid.equals(messageUuid)) {
+                    // Exécuter sur le thread principal de Minecraft
+                    Minecraft.getInstance().execute(() -> {
+                        if ("enter".equals(action)) {
+                            ZoneNotificationManager.showZoneNotification(zoneName);
+                            AxisGuiMod.LOGGER.info("✓ Notification affichée pour l'entrée dans la zone: " + zoneName);
+                        } else if ("leave".equals(action)) {
+                            AxisGuiMod.LOGGER.info("✓ Sortie de la zone: " + zoneName);
+                            // On peut ignorer les "leave" pour l'instant ou ajouter une notification de sortie
+                        }
+                    });
+                } else {
+                    AxisGuiMod.LOGGER.info("✗ UUID ne correspond pas - Notification ignorée");
                 }
             }
         } catch (Exception e) {
@@ -126,5 +161,9 @@ public class WebSocketManager {
     
     public static String getWebSocketUrl() {
         return AxisGuiModVariables.websocketUrl;
+    }
+    
+    public static String getPlayerUuidOverride() {
+        return AxisGuiModVariables.playerUuidOverride;
     }
 }
