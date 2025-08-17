@@ -26,6 +26,10 @@ runs {
 
 dependencies {
     implementation 'net.neoforged:neoforge:20.6.117'
+    
+    // WebSocket dependencies
+    implementation 'org.java-websocket:Java-WebSocket:1.5.3'
+    implementation 'com.google.code.gson:gson:2.10.1'
 }
 
 tasks.withType(JavaCompile).configureEach {

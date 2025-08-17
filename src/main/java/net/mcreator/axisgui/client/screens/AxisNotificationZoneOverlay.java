@@ -1,7 +1,4 @@
-
 package net.mcreator.axisgui.client.screens;
-
-import org.checkerframework.checker.units.qual.h;
 
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -15,6 +12,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.Minecraft;
+
+import net.mcreator.axisgui.websocket.ZoneNotificationManager;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -36,17 +35,43 @@ public class AxisNotificationZoneOverlay {
 			y = entity.getY();
 			z = entity.getZ();
 		}
+		
+		// Mettre à jour l'animation
+		ZoneNotificationManager.updateAnimation();
+		
+		// Vérifier si on doit afficher la notification
+		if (!ZoneNotificationManager.shouldShowNotification()) {
+			return;
+		}
+		
 		RenderSystem.disableDepthTest();
 		RenderSystem.depthMask(false);
 		RenderSystem.enableBlend();
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 		RenderSystem.setShaderColor(1, 1, 1, 1);
-		if (true) {
-			event.getGuiGraphics().blit(new ResourceLocation("axis_gui:textures/screens/axisnotif.png"), w - 222, 3, 0, 0, 225, 44, 225, 44);
-
-			event.getGuiGraphics().drawString(Minecraft.getInstance().font, Component.translatable("gui.axis_gui.axis_notification_zone.label_caelora_village"), w / 2 + 66, h / 2 + -95, -7473, false);
-		}
+		
+		// Obtenir la position animée
+		int animatedY = ZoneNotificationManager.getAnimatedY();
+		String zoneName = ZoneNotificationManager.getCurrentZoneName();
+		
+		// Dessiner la texture de notification
+		event.getGuiGraphics().blit(new ResourceLocation("axis_gui:textures/screens/axisnotif.png"), 
+			w - 222, animatedY, 0, 0, 225, 44, 225, 44);
+		
+		// Dessiner "Welcome to" en haut
+		event.getGuiGraphics().drawString(Minecraft.getInstance().font, 
+			Component.literal("Welcome to"), 
+			w - 160, animatedY + 8, 
+			0xFFD700, false); // Couleur dorée
+		
+		// Dessiner le nom de la zone centré
+		int textWidth = Minecraft.getInstance().font.width(zoneName);
+		event.getGuiGraphics().drawString(Minecraft.getInstance().font, 
+			Component.literal(zoneName), 
+			w - 160 + (128 - textWidth) / 2, animatedY + 22, 
+			0xFFFFFF, false); // Couleur blanche
+		
 		RenderSystem.depthMask(true);
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.enableDepthTest();
