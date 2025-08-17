@@ -1,0 +1,46 @@
+{
+  "mod_elements": [
+    {
+      "name": "AxisNotificationZone",
+      "type": "overlay",
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "axis_notification_zone",
+      "metadata": {
+        "files": [
+          "src/main/java/net/mcreator/axisgui/client/screens/AxisNotificationZoneOverlay.java"
+        ]
+      }
+    }
+  ],
+  "variable_elements": [],
+  "sound_elements": [],
+  "tag_elements": {},
+  "tab_element_order": {},
+  "language_map": {
+    "en_us": {
+      "gui.axis_gui.axis_notification_zone.label_eqw": "Axis ALPHA version",
+      "gui.axis_gui.axis_notification_zone.label_caelora_village": "Caelora Village"
+    }
+  },
+  "foldersRoot": {
+    "name": "~",
+    "children": []
+  },
+  "workspaceSettings": {
+    "modid": "axis_gui",
+    "modName": "Axis GUI",
+    "version": "1.0.0",
+    "author": "ASUS, MCreator",
+    "websiteURL": "https://mcreator.net",
+    "license": "Not specified",
+    "serverSideOnly": false,
+    "requiredMods": [],
+    "dependencies": [],
+    "dependants": [],
+    "mcreatorDependencies": [],
+    "currentGenerator": "neoforge-1.20.6",
+    "modElementsPackage": "net.mcreator.axisgui"
+  },
+  "mcreatorVersion": 202400232117
+}

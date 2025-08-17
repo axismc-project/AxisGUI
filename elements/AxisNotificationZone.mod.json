@@ -1,0 +1,44 @@
+{
+  "_fv": 66,
+  "_type": "overlay",
+  "definition": {
+    "priority": "HIGH",
+    "components": [
+      {
+        "type": "image",
+        "data": {
+          "image": "axisnotif.png",
+          "use1Xscale": false,
+          "anchorPoint": "TOP_RIGHT",
+          "x": 205,
+          "y": 3
+        }
+      },
+      {
+        "type": "label",
+        "data": {
+          "name": "label_caelora_village",
+          "text": {
+            "fixedValue": "Caelora Village"
+          },
+          "color": {
+            "value": -7473,
+            "falpha": 0.0
+          },
+          "anchorPoint": "CENTER",
+          "x": 279,
+          "y": 25
+        }
+      }
+    ],
+    "baseTexture": "",
+    "overlayTarget": "Ingame",
+    "gridSettings": {
+      "sx": 21,
+      "sy": 18,
+      "ox": 10,
+      "oy": 12,
+      "snapOnGrid": true
+    }
+  }
+}
