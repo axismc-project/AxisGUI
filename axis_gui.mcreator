@@ -17,13 +17,13 @@
     {
       "name": "websocketUrl",
       "type": "string",
-      "scope": "map",
+      "scope": "global",
       "value": "\"wss://api.neant.world/ws/zones?api_key\u003dmk_live_admin_bootstrap_key_12345678901234567890123456789012\""
     },
     {
       "name": "notificationDuration",
       "type": "number",
-      "scope": "map",
+      "scope": "global",
       "value": "5.0"
     }
   ],
