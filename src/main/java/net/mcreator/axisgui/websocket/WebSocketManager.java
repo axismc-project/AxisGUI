@@ -20,13 +20,16 @@ public class WebSocketManager {
     
     public static void initialize() {
         // Initialiser l'URL par défaut si vide
-        if (AxisGuiModVariables.websocketUrl == null || AxisGuiModVariables.websocketUrl.isEmpty()) {
-            AxisGuiModVariables.websocketUrl = "ws://localhost:8080";
+        if (AxisGuiModVariables.MapVariables.get(Minecraft.getInstance().level).websocketUrl == null || 
+            AxisGuiModVariables.MapVariables.get(Minecraft.getInstance().level).websocketUrl.isEmpty()) {
+            AxisGuiModVariables.MapVariables.get(Minecraft.getInstance().level).websocketUrl = "ws://localhost:8080";
+            AxisGuiModVariables.MapVariables.get(Minecraft.getInstance().level).syncData(Minecraft.getInstance().level);
         }
         
         // Initialiser la durée par défaut si 0
-        if (AxisGuiModVariables.notificationDuration == 0) {
-            AxisGuiModVariables.notificationDuration = 3; // 3 secondes par défaut
+        if (AxisGuiModVariables.MapVariables.get(Minecraft.getInstance().level).notificationDuration == 0) {
+            AxisGuiModVariables.MapVariables.get(Minecraft.getInstance().level).notificationDuration = 3; // 3 secondes par défaut
+            AxisGuiModVariables.MapVariables.get(Minecraft.getInstance().level).syncData(Minecraft.getInstance().level);
         }
         
         connect();
@@ -42,12 +45,13 @@ public class WebSocketManager {
     
     private static void connect() {
         try {
-            URI serverUri = new URI(AxisGuiModVariables.websocketUrl);
+            String url = AxisGuiModVariables.MapVariables.get(Minecraft.getInstance().level).websocketUrl;
+            URI serverUri = new URI(url);
             client = new WebSocketClient(serverUri) {
                 @Override
                 public void onOpen(ServerHandshake handshake) {
                     connected = true;
-                    AxisGuiMod.LOGGER.info("WebSocket connecté au serveur: " + AxisGuiModVariables.websocketUrl);
+                    AxisGuiMod.LOGGER.info("WebSocket connecté au serveur: " + url);
                 }
                 
                 @Override
@@ -117,5 +121,13 @@ public class WebSocketManager {
         }
         connected = false;
         scheduler.shutdown();
+    }
+    
+    public static double getNotificationDuration() {
+        return AxisGuiModVariables.MapVariables.get(Minecraft.getInstance().level).notificationDuration;
+    }
+    
+    public static String getWebSocketUrl() {
+        return AxisGuiModVariables.MapVariables.get(Minecraft.getInstance().level).websocketUrl;
     }
 }

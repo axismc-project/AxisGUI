@@ -1,7 +1,5 @@
 package net.mcreator.axisgui.websocket;
 
-import net.mcreator.axisgui.network.AxisGuiModVariables;
-
 public class ZoneNotificationManager {
     private static boolean showNotification = false;
     private static String currentZoneName = "";
@@ -37,7 +35,7 @@ public class ZoneNotificationManager {
         long elapsed = currentTime - animationStartTime;
         
         // Utiliser la durée depuis les variables MCreator
-        long showDurationMs = (long)(AxisGuiModVariables.notificationDuration * 1000);
+        long showDurationMs = (long)(WebSocketManager.getNotificationDuration() * 1000);
         long totalAnimationMs = showDurationMs + SLIDE_IN_DURATION + SLIDE_OUT_DURATION;
         
         // Arrêter l'animation après la durée totale
@@ -56,7 +54,7 @@ public class ZoneNotificationManager {
         }
         
         long elapsed = System.currentTimeMillis() - animationStartTime;
-        long showDurationMs = (long)(AxisGuiModVariables.notificationDuration * 1000);
+        long showDurationMs = (long)(WebSocketManager.getNotificationDuration() * 1000);
         long slideOutStart = SLIDE_IN_DURATION + showDurationMs;
         
         if (elapsed <= SLIDE_IN_DURATION) {
