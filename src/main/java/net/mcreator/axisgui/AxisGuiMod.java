@@ -10,18 +10,15 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.fml.util.thread.SidedThreadGroups;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import net.minecraft.util.Tuple;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.FriendlyByteBuf;
 
-import net.mcreator.axisgui.websocket.WebSocketManager;
+import net.mcreator.axisgui.network.AxisGuiModVariables;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.Map;
@@ -40,18 +37,11 @@ public class AxisGuiMod {
 		// End of user code block mod constructor
 		NeoForge.EVENT_BUS.register(this);
 		modEventBus.addListener(this::registerNetworking);
-		modEventBus.addListener(this::clientSetup);
+
+		AxisGuiModVariables.ATTACHMENT_TYPES.register(modEventBus);
 
 		// Start of user code block mod init
 		// End of user code block mod init
-	}
-
-	@OnlyIn(Dist.CLIENT)
-	private void clientSetup(final FMLClientSetupEvent event) {
-		event.enqueueWork(() -> {
-			// Initialiser le WebSocket côté client
-			WebSocketManager.initialize();
-		});
 	}
 
 	// Start of user code block mod methods

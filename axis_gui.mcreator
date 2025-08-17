@@ -13,7 +13,20 @@
       }
     }
   ],
-  "variable_elements": [],
+  "variable_elements": [
+    {
+      "name": "websocketUrl",
+      "type": "string",
+      "scope": "map",
+      "value": "\"wss://api.neant.world/ws/zones?api_key\u003dmk_live_admin_bootstrap_key_12345678901234567890123456789012\""
+    },
+    {
+      "name": "notificationDuration",
+      "type": "number",
+      "scope": "map",
+      "value": "5.0"
+    }
+  ],
   "sound_elements": [],
   "tag_elements": {},
   "tab_element_order": {},
